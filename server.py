@@ -1,47 +1,46 @@
 from flask import Flask, request, send_file
 import yt_dlp
-import uuid
 import os
 
 app = Flask(__name__)
 
+DOWNLOAD_FOLDER = "downloads"
+
+if not os.path.exists(DOWNLOAD_FOLDER):
+    os.makedirs(DOWNLOAD_FOLDER)
+
+
+@app.route("/")
+def home():
+    return "Y2G Downloader API Running"
+
+
 @app.route("/mp3")
 def mp3():
-
     url = request.args.get("url")
-    filename = str(uuid.uuid4()) + ".mp3"
+
+    if not url:
+        return "No URL provided"
 
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': filename,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '320',
-        }],
+        "format": "bestaudio",
+        "cookiefile": "cookies.txt",
+        "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "320"
+        }]
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        info = ydl.extract_info(url, download=True)
+        filename = ydl.prepare_filename(info)
 
-    return send_file(filename, as_attachment=True)
+    mp3_file = filename.rsplit(".", 1)[0] + ".mp3"
 
-
-@app.route("/mp4")
-def mp4():
-
-    url = request.args.get("url")
-    filename = str(uuid.uuid4()) + ".mp4"
-
-    ydl_opts = {
-        'format': 'bestvideo+bestaudio',
-        'outtmpl': filename,
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-
-    return send_file(filename, as_attachment=True)
+    return send_file(mp3_file, as_attachment=True)
 
 
-app.run(host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
