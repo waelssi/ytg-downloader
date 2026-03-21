@@ -25,15 +25,29 @@ def mp3():
     # detect ffmpeg path
     ffmpeg_path = "/usr/bin/ffmpeg"
 
-    ydl_opts = {
-        "format": "bestaudio",
-        "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
-        "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "320"
-        }]
-    }
+  ydl_opts = {
+    'format': 'bestaudio/best',
+    'outtmpl': 'downloads/%(title)s.%(ext)s',
+
+
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+    },
+
+
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['android', 'web']
+        }
+    },
+
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '320',
+    }],
+}
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
