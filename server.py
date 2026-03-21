@@ -23,16 +23,16 @@ def mp3():
         return "No URL provided"
 
     ydl_opts = {
-        'ffmpeg_location': '/usr/bin/ffmpeg',
-        "format": "bestaudio",
-        "cookiefile": "cookies.txt",
-        "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
-        "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "320"
-        }]
-    }
+    "format": "bestaudio",
+    "cookiefile": "cookies.txt",
+    "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
+    "ffmpeg_location": "/usr/bin/ffmpeg",
+    "postprocessors": [{
+        "key": "FFmpegExtractAudio",
+        "preferredcodec": "mp3",
+        "preferredquality": "320"
+    }]
+}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
