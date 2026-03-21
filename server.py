@@ -22,25 +22,31 @@ def mp3():
     if not url:
         return "No URL provided"
 
+    # detect ffmpeg path
+    ffmpeg_path = "/usr/bin/ffmpeg"
+
     ydl_opts = {
-    "format": "bestaudio",
-    "cookiefile": "cookies.txt",
-    "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
-    "ffmpeg_location": "/usr/bin/ffmpeg",
-    "postprocessors": [{
-        "key": "FFmpegExtractAudio",
-        "preferredcodec": "mp3",
-        "preferredquality": "320"
-    }]
-}
+        "format": "bestaudio",
+        "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
+        "ffmpeg_location": ffmpeg_path,
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "320"
+        }]
+    }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info)
 
-    mp3_file = filename.rsplit(".", 1)[0] + ".mp3"
+        mp3_file = filename.rsplit(".", 1)[0] + ".mp3"
 
-    return send_file(mp3_file, as_attachment=True)
+        return send_file(mp3_file, as_attachment=True)
+
+    except Exception as e:
+        return f"ERROR: {str(e)}"
 
 
 if __name__ == "__main__":
