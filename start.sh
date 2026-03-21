@@ -1,9 +1,6 @@
-#!/bin/bash
-
 apt-get update
 apt-get install -y ffmpeg
 
-# show ffmpeg path (debug)
-which ffmpeg
+pip install -r requirements.txt
 
 python server.py
