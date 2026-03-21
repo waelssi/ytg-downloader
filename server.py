@@ -1,6 +1,7 @@
 from flask import Flask, request, send_file
 import yt_dlp
 import os
+import subprocess   # ✅ add this import
 
 app = Flask(__name__)
 
@@ -15,6 +16,16 @@ def home():
     return "Y2G Downloader API Running"
 
 
+# ✅ ADD IT HERE (new route)
+@app.route("/check")
+def check():
+    try:
+        result = subprocess.run(["ffmpeg", "-version"], capture_output=True, text=True)
+        return result.stdout
+    except Exception as e:
+        return str(e)
+
+
 @app.route("/mp3")
 def mp3():
     url = request.args.get("url")
@@ -23,21 +34,15 @@ def mp3():
         return "No URL provided"
 
     ydl_opts = {
-    'format': 'bestaudio/best',
-    'outtmpl': 'downloads/%(title)s.%(ext)s',
-
-    'ffmpeg_location': 'ffmpeg',
-
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0',
-    },
-
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '320',
-    }],
-}
+        'format': 'bestaudio/best',
+        'outtmpl': 'downloads/%(title)s.%(ext)s',
+        'ffmpeg_location': 'ffmpeg',  # ✅ important
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '320',
+        }],
+    }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -45,7 +50,6 @@ def mp3():
             filename = ydl.prepare_filename(info)
 
         mp3_file = filename.rsplit(".", 1)[0] + ".mp3"
-
         return send_file(mp3_file, as_attachment=True)
 
     except Exception as e:
