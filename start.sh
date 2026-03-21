@@ -1,9 +1,11 @@
 #!/bin/bash
 
-apt-get update
-# Install ffmpeg
+echo "Installing ffmpeg..."
 apt-get update && apt-get install -y ffmpeg
 
-pip install -r requirements.txt
+echo "Check ffmpeg:"
+which ffmpeg
+ffmpeg -version
 
+echo "Starting app..."
 python server.py
