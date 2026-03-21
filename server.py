@@ -23,6 +23,7 @@ def mp3():
         return "No URL provided"
 
     ydl_opts = {
+        'ffmpeg_location': '/usr/bin/ffmpeg',
         "format": "bestaudio",
         "cookiefile": "cookies.txt",
         "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
