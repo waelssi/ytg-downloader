@@ -28,7 +28,6 @@ def mp3():
     ydl_opts = {
         "format": "bestaudio",
         "outtmpl": DOWNLOAD_FOLDER + "/%(title)s.%(ext)s",
-        "ffmpeg_location": ffmpeg_path,
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
