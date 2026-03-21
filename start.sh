@@ -1,2 +1,4 @@
-apt-get update && apt-get install -y ffmpeg
+#!/bin/bash
+apt-get update
+apt-get install -y ffmpeg
 python server.py
